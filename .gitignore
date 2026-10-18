@@ -1,0 +1,36 @@
+# R session and history files
+.Rhistory
+.Rapp.history
+.RData
+.RDataTmp
+.Ruserdata
+
+# RStudio project state (the .Rproj file itself is tracked)
+.Rproj.user/
+
+# Raw data: Bloomberg exports are licensed and must never be published
+data/raw/
+
+# Derived data: rebuilt by the pipeline, and derived from licensed data
+data/processed/
+*.rds
+
+# Generated tables and figures: rebuilt by the pipeline
+output/
+
+# R build / knitr / rmarkdown artefacts
+*_cache/
+*.utf8.md
+*.knit.md
+rsconnect/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+data/raw/
+data/processed/
+output/
+*.rds
+.venv/
+__pycache__/

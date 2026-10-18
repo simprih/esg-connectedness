@@ -29,6 +29,13 @@ gfevd <- function(x, p, h) {
 
 tci <- function(theta) mean(100 - diag(theta))
 
+# Number of equations whose residuals still reject the Ljung-Box test of no autocorrelation
+autocorrelated_equations <- function(x, p) {
+  u <- resid(VAR(as.matrix(x), p = p, type = "const"))
+  p_values <- apply(u, 2, function(e) Box.test(e, lag = resid_lb_lag, type = "Ljung-Box")$p.value)
+  sum(p_values < resid_lb_level)
+}
+
 # FROM, share received from the twin, and FROM without the twin, for both members of each pair
 twin_measures <- function(theta) {
   index <- c(names(twins), unname(twins))
@@ -53,23 +60,34 @@ full_table <- function(theta) {
 x <- read_log_rv(main_level)
 stopifnot(all(c(names(twins), twins) %in% colnames(x)))
 
-main_lag <- unname(VARselect(as.matrix(x), lag.max = var_max_lag, type = "const")$selection["SC(n)"])
-theta <- gfevd(x, main_lag, forecast_horizon)
+criteria <- VARselect(as.matrix(x), lag.max = var_max_lag, type = "const")$criteria
+lag_selection <- data.frame(
+  lag = seq_len(var_max_lag), aic = criteria["AIC(n)", ], bic = criteria["SC(n)", ],
+  autocorrelated_equations = sapply(seq_len(var_max_lag), function(p) autocorrelated_equations(x, p)),
+  max_root = sapply(seq_len(var_max_lag), function(p) check_stable(x, p)),
+  main = seq_len(var_max_lag) == var_lag, row.names = NULL
+)
+if (lag_selection$autocorrelated_equations[var_lag] > 0) stop("VAR(", var_lag, ") residuals are still autocorrelated")
+
+theta <- gfevd(x, var_lag, forecast_horizon)
 
 robustness <- do.call(rbind, lapply(robust_lags, function(p) {
-  modulus <- check_stable(x, p)
   do.call(rbind, lapply(robust_horizons, function(h) {
     th <- gfevd(x, p, h)
-    data.frame(lag = p, horizon = h, max_root = modulus, tci = tci(th), twin_measures(th))
+    data.frame(lag = p, horizon = h, max_root = check_stable(x, p), tci = tci(th), twin_measures(th))
   }))
 }))
 
 dir.create(tables_dir, recursive = TRUE, showWarnings = FALSE)
+write.csv(lag_selection, file.path(tables_dir, sprintf(var_lag_selection_file, main_level)), row.names = FALSE)
 write.csv(full_table(theta), file.path(tables_dir, sprintf(dy_static_table_file, main_level)), row.names = FALSE)
 write.csv(twin_measures(theta), file.path(tables_dir, sprintf(dy_static_twins_file, main_level)), row.names = FALSE)
 write.csv(robustness, file.path(tables_dir, sprintf(dy_static_robustness_file, main_level)), row.names = FALSE)
 
-cat(sprintf("VAR lag chosen by BIC: %d | horizon: %d weeks | TCI: %.2f%%\n", main_lag, forecast_horizon, tci(theta)))
+cat(sprintf("Lag by BIC: %d, by AIC: %d | autocorrelated equations by lag: %s\n",
+            which.min(lag_selection$bic), which.min(lag_selection$aic),
+            paste(lag_selection$autocorrelated_equations, collapse = "/")))
+cat(sprintf("VAR(%d), horizon %d weeks | TCI: %.2f%%\n", var_lag, forecast_horizon, tci(theta)))
 tci_range <- range(robustness$tci)
 cat(sprintf("TCI over lags %s and horizons %s: %.2f to %.2f%%\n",
             paste(range(robust_lags), collapse = "-"), paste(robust_horizons, collapse = "/"), tci_range[1], tci_range[2]))

@@ -51,8 +51,7 @@ twin_stats <- function(theta) {
   unlist(lapply(m, function(v) c(setNames(v, parent), mean = mean(v))))
 }
 
-# Blocks of l consecutive residual vectors drawn with replacement; each position within a block is
-# centered on its mean over all possible blocks, so that the bootstrap innovations have mean zero
+# Moving blocks of residuals, centered by position within the block so that bootstrap innovations have mean zero
 mbb_residuals <- function(u, l) {
   n <- nrow(u)
   starts <- sample.int(n - l + 1, ceiling(n / l), replace = TRUE)

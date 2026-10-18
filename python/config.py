@@ -8,6 +8,8 @@ RAW_DIR = ROOT / "data" / "raw"  # read-only
 PROCESSED_DIR = ROOT / "data" / "processed"
 BLOOMBERG_FILE = RAW_DIR / "bloomberg_daily.xlsx"
 DAILY_PRICES_FILE = "daily_prices_{level}.csv"  # written by 01, read by 02
+WEEKLY_RETURNS_FILE = "weekly_returns_{level}.csv"
+WEEKLY_LOG_RV_FILE = "weekly_log_rv_{level}.csv"
 
 # MSCI exports: 6 metadata rows above the header, dates stored as text ("Sep 1, 2010")
 MSCI_HEADER_ROW = 6
@@ -20,6 +22,10 @@ EXCEL_ORIGIN = "1899-12-30"
 BLOOMBERG_BLOCK_WIDTH = 3
 
 LEVELS = ("price", "net")  # price = main analysis, net = robustness
+
+# Weeks run Friday to Thursday and are labelled by their Thursday close
+WEEK_RULE = "W-THU"
+DAYS_PER_WEEK = 5
 
 # Rename by name, never by position: column order differs between MSCI lots
 MSCI_COLUMNS = {

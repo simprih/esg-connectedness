@@ -10,6 +10,9 @@ BLOOMBERG_FILE = RAW_DIR / "bloomberg_daily.xlsx"
 DAILY_PRICES_FILE = "daily_prices_{level}.csv"  # written by 01, read by 02
 WEEKLY_RETURNS_FILE = "weekly_returns_{level}.csv"
 WEEKLY_LOG_RV_FILE = "weekly_log_rv_{level}.csv"
+TABLES_DIR = ROOT / "output" / "tables"
+TABLE1_STATS_FILE = "table1_stats_{level}.csv"  # every statistic and p-value, unrounded
+TABLE1_FILE = "table1_{level}.csv"  # paper layout, with significance stars
 
 # MSCI exports: 6 metadata rows above the header, dates stored as text ("Sep 1, 2010")
 MSCI_HEADER_ROW = 6
@@ -26,6 +29,14 @@ LEVELS = ("price", "net")  # price = main analysis, net = robustness
 # Weeks run Friday to Thursday and are labelled by their Thursday close
 WEEK_RULE = "W-THU"
 DAYS_PER_WEEK = 5
+
+# Table 1: descriptive statistics
+RETURNS_SCALE = 100  # returns shown in percent
+ADF_MAX_LAG = 20  # Schwert (1989) rule, 12 * (T / 100)^(1/4) with T = 840 weeks
+ERS_LAGS = 4  # as in ConnectednessApproach::SummaryStatistics
+PORTMANTEAU_LAG = 20  # Q(20) and Q2(20), as in Antonakakis et al. (2020)
+SIGNIF_LEVELS = (0.01, 0.05, 0.10)  # ***, **, *
+TABLE_DIGITS = 3
 
 # Rename by name, never by position: column order differs between MSCI lots
 MSCI_COLUMNS = {

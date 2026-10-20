@@ -13,6 +13,8 @@ WEEKLY_LOG_RV_FILE = "weekly_log_rv_{level}.csv"
 TABLES_DIR = ROOT / "output" / "tables"
 TABLE1_STATS_FILE = "table1_stats_{level}.csv"  # every statistic and p-value, unrounded
 TABLE1_FILE = "table1_{level}.csv"  # paper layout, with significance stars
+CRISIS_FILE = ROOT / "config" / "crisis_periods.csv"
+CRISIS_COUNTS_FILE = "crisis_week_counts.csv"
 
 # MSCI exports: 6 metadata rows above the header, dates stored as text ("Sep 1, 2010")
 MSCI_HEADER_ROW = 6
@@ -37,6 +39,10 @@ ERS_LAGS = 4  # as in ConnectednessApproach::SummaryStatistics
 PORTMANTEAU_LAG = 20  # Q(20) and Q2(20), as in Antonakakis et al. (2020)
 SIGNIF_LEVELS = (0.01, 0.05, 0.10)  # ***, **, *
 TABLE_DIGITS = 3
+
+# Block 3: the TVP-VAR prior is trained on the first weeks, which are then excluded from every measure
+TVP_PRIOR_WEEKS = 104
+DESCRIPTION_ONLY_CRISES = ("euro_debt",)  # falls inside the prior training period
 
 # Rename by name, never by position: column order differs between MSCI lots
 MSCI_COLUMNS = {

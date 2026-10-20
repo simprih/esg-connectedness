@@ -1,0 +1,11 @@
+crisis,window,start,end,start_event,end_event,source
+euro_debt,short,2011-07-08,2012-09-06,"Contagion to Italy (BTP-Bund spread widening, 8-11 July 2011)",ECB announces Outright Monetary Transactions (OMT),"ECB press release, 6 September 2012"
+china,short,2015-06-12,2016-02-27,Shanghai Composite peak,G20 Shanghai communique,to be sourced (academic)
+covid,short,2020-02-21,2020-06-30,"Codogno outbreak, market crash from 24 February 2020",End of the acute phase (conventional date),to be sourced
+ukraine,short,2022-02-24,2022-12-15,Russian invasion of Ukraine,Fed (14 December) and ECB (15 December) slow rate hikes to 50 bp,"Fed and ECB press releases, 14-15 December 2022"
+tariffs,short,2025-04-02,2025-05-12,US Liberation Day tariff announcement,US-China Geneva agreement,"US-China joint statement, 12 May 2025"
+euro_debt,long,2011-07-08,2012-09-06,"Contagion to Italy (BTP-Bund spread widening, 8-11 July 2011)",ECB announces Outright Monetary Transactions (OMT),Same as short window (no long window in the literature)
+china,long,2015-06-12,2016-02-27,Shanghai Composite peak,G20 Shanghai communique,Same as short window (no long window in the literature)
+covid,long,2020-03-12,2022-02-23,Start of sub-period B,End of sub-period B,Karkowska and Urjasz (2025)
+ukraine,long,2022-02-24,2023-05-31,Start of sub-period C,End of sub-period C,Karkowska and Urjasz (2025)
+tariffs,long,2025-04-02,2025-05-12,US Liberation Day tariff announcement,US-China Geneva agreement,Same as short window (no long window in the literature)

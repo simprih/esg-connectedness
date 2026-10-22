@@ -33,6 +33,11 @@ tvp_kappa2 <- 0.96
 tvp_prior_weeks <- 104
 tvp_lags <- c(1, 2, 4)
 tvp_lb_lags <- c(4, 10)
+crisis_weeks_file <- "crisis_weeks.csv"  # written by python/06_count_crisis_weeks.py
+crisis_window_main <- "short"
+description_only_crises <- "euro_debt"
+spike_sd <- 2  # a weekly rise in log RV above 2 standard deviations is a volatility spike
+spike_horizon <- 4  # weeks after a spike
 
 # Outputs
 var_lag_selection_file <- "var_lag_selection_%s.csv"
@@ -45,3 +50,7 @@ tvp_fit_file <- "tvp_var_fit_%s_lag%d.rds"
 tvp_diag_summary_file <- "tvp_diag_summary_%s.csv"
 tvp_diag_equations_file <- "tvp_diag_equations_%s.csv"
 tvp_diag_unstable_file <- "tvp_diag_unstable_%s.csv"
+tvp_lag_choice_file <- "tvp_lag_choice_%s.csv"
+tvp_lag_choice_equations_file <- "tvp_lag_choice_equations_%s.csv"
+tvp_bias_package_file <- "tvp_bias_package_%s.csv"
+tvp_bias_split_file <- "tvp_bias_split_%s.csv"

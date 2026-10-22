@@ -1,4 +1,4 @@
-"""Count crisis and calm weeks for each crisis window, after the TVP-VAR prior training weeks."""
+"""Classify and count crisis and calm weeks for each crisis window, after the TVP-VAR prior training weeks."""
 
 import pandas as pd
 
@@ -41,17 +41,28 @@ def count_window(flags, n_overlapping, window):
     return pd.DataFrame(rows)
 
 
+def week_labels(flags, window):
+    """One row per week: the crisis it belongs to, or "calm"."""
+    label = flags.idxmax(axis=1).where(flags.any(axis=1), "calm")
+    return pd.DataFrame({"date": flags.index, "window": window, "period": label.to_numpy()})
+
+
 def main():
     crises = pd.read_csv(config.CRISIS_FILE, parse_dates=["start", "end"])
     weekly = pd.read_csv(config.PROCESSED_DIR / config.WEEKLY_LOG_RV_FILE.format(level="price"),
                          index_col="date", parse_dates=True)
     weeks = weekly.index[config.TVP_PRIOR_WEEKS:]
 
-    counts = pd.concat([count_window(*crisis_flags(weeks, crises[crises.window == w]), w)
-                        for w in crises.window.unique()], ignore_index=True)
+    counts, labels = [], []
+    for w in crises.window.unique():
+        flags, n_overlapping = crisis_flags(weeks, crises[crises.window == w])
+        counts.append(count_window(flags, n_overlapping, w))
+        labels.append(week_labels(flags, w))
+    counts = pd.concat(counts, ignore_index=True)
 
     config.TABLES_DIR.mkdir(parents=True, exist_ok=True)
     counts.to_csv(config.TABLES_DIR / config.CRISIS_COUNTS_FILE, index=False)
+    pd.concat(labels, ignore_index=True).to_csv(config.PROCESSED_DIR / config.CRISIS_WEEKS_FILE, index=False)
     print(f"{len(weeks)} weeks after the {config.TVP_PRIOR_WEEKS} prior weeks, "
           f"{weeks[0]:%Y-%m-%d} to {weeks[-1]:%Y-%m-%d}\n")
     print(counts.to_string(index=False))

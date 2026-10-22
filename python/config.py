@@ -15,6 +15,7 @@ TABLE1_STATS_FILE = "table1_stats_{level}.csv"  # every statistic and p-value, u
 TABLE1_FILE = "table1_{level}.csv"  # paper layout, with significance stars
 CRISIS_FILE = ROOT / "config" / "crisis_periods.csv"
 CRISIS_COUNTS_FILE = "crisis_week_counts.csv"
+CRISIS_WEEKS_FILE = "crisis_weeks.csv"  # written by 06, read by the R scripts of Block 3
 
 # MSCI exports: 6 metadata rows above the header, dates stored as text ("Sep 1, 2010")
 MSCI_HEADER_ROW = 6

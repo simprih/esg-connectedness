@@ -63,7 +63,7 @@ tvp_var <- function(x, nlag, kappa1, kappa2, prior_weeks, mode = c("tv_constant"
   Q_t <- array(0, c(r, r, n), dimnames = list(names, names, dates))
   const_t <- matrix(0, n, r, dimnames = list(dates, names))
   errors <- matrix(NA_real_, n, r, dimnames = list(dates, names))
-  n_unstable <- 0
+  unstable <- rep(FALSE, n)
 
   for (t in seq_len(n)) {
     # Covariance: one-step forecast error with the coefficients computed at t - 1 (unstable or not, as the package)
@@ -109,9 +109,10 @@ tvp_var <- function(x, nlag, kappa1, kappa2, prior_weeks, mode = c("tv_constant"
       B_t[, , t] <- B_t[, , t - 1]
       const_t[t, ] <- const_t[t - 1, ]
       beta_prev <- shrink_unstable(beta_prev, r, constant)
-      n_unstable <- n_unstable + 1
+      unstable[t] <- TRUE
     }
   }
 
-  list(B_t = B_t, Q_t = Q_t, constant = const_t, errors = errors, n_unstable = n_unstable)
+  list(B_t = B_t, Q_t = Q_t, constant = const_t, errors = errors,
+       unstable = setNames(unstable, dates), n_unstable = sum(unstable))
 }

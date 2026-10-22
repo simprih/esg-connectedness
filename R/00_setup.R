@@ -27,6 +27,13 @@ n_boot <- 1999  # alpha * (B + 1) is an integer at 1%, 5% and 10%
 ci_level <- 0.95
 bootstrap_seed <- 20261018
 
+# Block 3: TVP-VAR with a time-varying constant; the prior weeks are dropped from every measure
+tvp_kappa1 <- 0.99
+tvp_kappa2 <- 0.96
+tvp_prior_weeks <- 104
+tvp_lags <- c(1, 2, 4)
+tvp_lb_lags <- c(4, 10)
+
 # Outputs
 var_lag_selection_file <- "var_lag_selection_%s.csv"
 dy_static_table_file <- "dy_static_table_%s.csv"
@@ -34,3 +41,7 @@ dy_static_twins_file <- "dy_static_twins_%s.csv"
 dy_static_robustness_file <- "dy_static_robustness_%s.csv"
 bootstrap_twins_file <- "bootstrap_twins_%s.csv"
 bootstrap_cross_shares_file <- "bootstrap_cross_shares_%s.csv"
+tvp_fit_file <- "tvp_var_fit_%s_lag%d.rds"
+tvp_diag_summary_file <- "tvp_diag_summary_%s.csv"
+tvp_diag_equations_file <- "tvp_diag_equations_%s.csv"
+tvp_diag_unstable_file <- "tvp_diag_unstable_%s.csv"

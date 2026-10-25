@@ -31,7 +31,8 @@ bootstrap_seed <- 20261018
 tvp_kappa1 <- 0.99
 tvp_kappa2 <- 0.96
 tvp_prior_weeks <- 104
-tvp_lags <- c(1, 2, 4)
+tvp_lags <- c(1, 2)
+tvp_main_lag <- 1
 tvp_lb_lags <- c(4, 10)
 crisis_weeks_file <- "crisis_weeks.csv"  # written by python/06_count_crisis_weeks.py
 crisis_window_main <- "short"
@@ -54,3 +55,4 @@ tvp_lag_choice_file <- "tvp_lag_choice_%s.csv"
 tvp_lag_choice_equations_file <- "tvp_lag_choice_equations_%s.csv"
 tvp_bias_package_file <- "tvp_bias_package_%s.csv"
 tvp_bias_split_file <- "tvp_bias_split_%s.csv"
+tvp_measures_file <- "tvp_measures_%s_lag%d.csv"

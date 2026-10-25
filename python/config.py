@@ -16,6 +16,10 @@ TABLE1_FILE = "table1_{level}.csv"  # paper layout, with significance stars
 CRISIS_FILE = ROOT / "config" / "crisis_periods.csv"
 CRISIS_COUNTS_FILE = "crisis_week_counts.csv"
 CRISIS_WEEKS_FILE = "crisis_weeks.csv"  # written by 06, read by the R scripts of Block 3
+FIGURES_DIR = ROOT / "output" / "figures"
+TVP_MEASURES_FILE = "tvp_measures_{level}_lag{lag}.csv"  # written by R/09
+TVP_DELTA_CRISIS_FILE = "tvp_delta_crisis_calm_{level}_lag{lag}.csv"
+TVP_FIGURES = ("tvp_tci", "tvp_from_ex_twin", "tvp_delta")  # saved as {name}_{level}_lag{lag}.png and .pdf
 
 # MSCI exports: 6 metadata rows above the header, dates stored as text ("Sep 1, 2010")
 MSCI_HEADER_ROW = 6
@@ -44,6 +48,16 @@ TABLE_DIGITS = 3
 # Block 3: the TVP-VAR prior is trained on the first weeks, which are then excluded from every measure
 TVP_PRIOR_WEEKS = 104
 DESCRIPTION_ONLY_CRISES = ("euro_debt",)  # falls inside the prior training period
+TVP_MAIN_LAG = 1
+CRISIS_WINDOW_MAIN = "short"
+
+TWINS = {"usa_esg": "usa", "europe_esg": "europe", "japan_esg": "japan", "em_esg": "em", "pxj_esg": "pxj"}
+PAIR_LABELS = {"usa": "USA", "europe": "Europe", "japan": "Japan", "em": "Emerging Markets", "pxj": "Pacific ex Japan"}
+CRISIS_LABELS = {"euro_debt": "Euro debt", "china": "China", "covid": "COVID-19", "ukraine": "Ukraine", "tariffs": "Tariffs"}
+
+# Figure colors: validated two-series categorical palette (parent, ESG) and neutral chart chrome
+COLORS = {"parent": "#2a78d6", "esg": "#eb6834", "ink": "#0b0b0b", "ink_secondary": "#52514e",
+          "muted": "#898781", "grid": "#e1e0d9", "baseline": "#c3c2b7", "crisis": "#ecebe6"}
 
 # Rename by name, never by position: column order differs between MSCI lots
 MSCI_COLUMNS = {

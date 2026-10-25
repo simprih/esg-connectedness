@@ -37,7 +37,8 @@ def style(ax, spans, label_crises=False):
     """Recessive chrome, crisis weeks shaded behind the data."""
     for name, start, end in spans:
         ax.axvspan(start, end, color=C["crisis"], lw=0, zorder=0)
-        if label_crises:
+        # The euro debt crisis has a single week after the prior period: shaded but not labelled
+        if label_crises and name not in config.DESCRIPTION_ONLY_CRISES:
             ax.text(start + (end - start) / 2, 1.01, config.CRISIS_LABELS.get(name, name), ha="center", va="bottom",
                     fontsize=7, color=C["muted"], transform=mtransforms.blended_transform_factory(ax.transData, ax.transAxes))
     ax.grid(axis="y", color=C["grid"], lw=0.6)

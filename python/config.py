@@ -20,6 +20,9 @@ FIGURES_DIR = ROOT / "output" / "figures"
 TVP_MEASURES_FILE = "tvp_measures_{level}_lag{lag}.csv"  # written by R/09
 TVP_DELTA_CRISIS_FILE = "tvp_delta_crisis_calm_{level}_lag{lag}.csv"
 TVP_FIGURES = ("tvp_tci", "tvp_from_ex_twin", "tvp_delta")  # saved as {name}_{level}_lag{lag}.png and .pdf
+CRISIS_TEST_SUMMARY_FILE = "crisis_test_summary_{level}_lag{lag}.csv"
+CRISIS_TEST_PAIRS_FILE = "crisis_test_pairs_{level}_lag{lag}.csv"
+CRISIS_TEST_FIGURE = "crisis_shift_test"  # saved as {name}_{level}_lag{lag}.png and .pdf
 
 # MSCI exports: 6 metadata rows above the header, dates stored as text ("Sep 1, 2010")
 MSCI_HEADER_ROW = 6
@@ -50,6 +53,12 @@ TVP_PRIOR_WEEKS = 104
 DESCRIPTION_ONLY_CRISES = ("euro_debt",)  # falls inside the prior training period
 TVP_MAIN_LAG = 1
 CRISIS_WINDOW_MAIN = "short"
+CRISIS_WINDOW_ROBUST = "long"
+
+# Crisis-calm tests (Block 3): circular calendar shift (main) and Newey-West regression
+TEST_ALPHA = 0.05  # two-sided
+SHIFT_MIN_WEEKS = 26  # sensitivity: drop shifts shorter than this, which nearly overlap the true crises
+NW_FIXED_LAGS = 52
 
 TWINS = {"usa_esg": "usa", "europe_esg": "europe", "japan_esg": "japan", "em_esg": "em", "pxj_esg": "pxj"}
 PAIR_LABELS = {"usa": "USA", "europe": "Europe", "japan": "Japan", "em": "Emerging Markets", "pxj": "Pacific ex Japan"}

@@ -23,6 +23,9 @@ TVP_FIGURES = ("tvp_tci", "tvp_from_ex_twin", "tvp_delta")  # saved as {name}_{l
 CRISIS_TEST_SUMMARY_FILE = "crisis_test_summary_{level}_lag{lag}.csv"
 CRISIS_TEST_PAIRS_FILE = "crisis_test_pairs_{level}_lag{lag}.csv"
 CRISIS_TEST_FIGURE = "crisis_shift_test"  # saved as {name}_{level}_lag{lag}.png and .pdf
+CRISIS_TEST_DETECTABLE_FILE = "crisis_test_detectable_{level}_lag{lag}.csv"
+ESG_GAP_FULL_PERIOD_FILE = "esg_gap_full_period_{level}_lag{lag}.csv"
+BOOTSTRAP_TWINS_FILE = "bootstrap_twins_{level}.csv"  # written by R/05
 
 # MSCI exports: 6 metadata rows above the header, dates stored as text ("Sep 1, 2010")
 MSCI_HEADER_ROW = 6
@@ -59,6 +62,12 @@ CRISIS_WINDOW_ROBUST = "long"
 TEST_ALPHA = 0.05  # two-sided
 SHIFT_MIN_WEEKS = 26  # sensitivity: drop shifts shorter than this, which nearly overlap the true crises
 NW_FIXED_LAGS = 52
+
+# Secondary analysis (Block 3): mean gap over the whole period, circular block bootstrap on the weekly gap
+GAP_BLOCK_LENGTHS = (52, 104)  # first = main, second = sensitivity
+GAP_BOOT_DRAWS = 9999
+GAP_BOOT_SEED = 20261106
+STATIC_BLOCK_LENGTH = 10  # main block length of the Block 2 bootstrap
 
 TWINS = {"usa_esg": "usa", "europe_esg": "europe", "japan_esg": "japan", "em_esg": "em", "pxj_esg": "pxj"}
 PAIR_LABELS = {"usa": "USA", "europe": "Europe", "japan": "Japan", "em": "Emerging Markets", "pxj": "Pacific ex Japan"}

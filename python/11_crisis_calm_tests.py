@@ -1,4 +1,4 @@
-"""Crisis-calm tests on the TVP-VAR gap: circular calendar shift (main test) and Newey-West regression."""
+"""Crisis-calm tests on the TVP-VAR gap (calendar shift, Newey-West) and secondary analysis of its full-period mean."""
 
 import matplotlib
 
@@ -87,6 +87,50 @@ def run_tests(delta, crisis):
     return row, d
 
 
+def detectable_effect(d):
+    """Quantiles of D(k), and the |D| above which the two-sided calendar-shift test rejects."""
+    a = config.TEST_ALPHA
+    low, high = np.quantile(d, [a / 2, 1 - a / 2])
+    return {"q_low": low, "q_high": high, "abs_threshold": np.quantile(np.abs(d), 1 - a)}
+
+
+def block_indices(n, block, draws, rng):
+    """Circular block bootstrap samples (Politis and Romano, 1992): blocks wrap around the end of the sample."""
+    starts = rng.integers(0, n, size=(draws, -(-n // block)))
+    return ((starts[:, :, None] + np.arange(block)) % n).reshape(draws, -1)[:, :n]
+
+
+def bootstrap_mean(delta, idx):
+    """Percentile interval of the mean, and the two-sided p-value of mean = 0 computed as in the Block 2 bootstrap."""
+    means = delta[idx].mean(axis=1)
+    a = config.TEST_ALPHA
+    low, high = np.quantile(means, [a / 2, 1 - a / 2])
+    tail = min((means <= 0).sum(), (means >= 0).sum())
+    return {"ci_low": low, "ci_high": high, "p": min(1.0, 2 * (1 + tail) / (len(means) + 1))}
+
+
+def full_period_gap(measures):
+    """Secondary analysis: mean gap over all weeks, with Newey-West and block bootstrap tests, next to Block 2."""
+    n = len(measures)
+    rng = np.random.default_rng(config.GAP_BOOT_SEED)
+    # The same draws serve every series, so that the average of the five pairs stays consistent with the pairs
+    samples = {b: block_indices(n, b, config.GAP_BOOT_DRAWS, rng) for b in config.GAP_BLOCK_LENGTHS}
+    static = pd.read_csv(config.TABLES_DIR / config.BOOTSTRAP_TWINS_FILE.format(level=LEVEL))
+    static = static[static.block_length == config.STATIC_BLOCK_LENGTH].set_index("pair")
+
+    rows = []
+    for name, label in SERIES.items():
+        delta = measures[f"delta_{name}"].to_numpy()
+        nw = sm.OLS(delta, np.ones(n)).fit(cov_type="HAC", cov_kwds={"maxlags": config.NW_FIXED_LAGS})
+        row = {"series": label, "mean": delta.mean(), "se_nw_52": nw.bse[0], "t_nw_52": nw.tvalues[0], "p_nw_52": nw.pvalues[0]}
+        for block, idx in samples.items():
+            row |= {f"{k}_block{block}": v for k, v in bootstrap_mean(delta, idx).items()}
+        row |= {"static_gap": static.gap[name], "static_ci_low": static.ci_low[name],
+                "static_ci_high": static.ci_high[name], "static_p": static.p_value[name]}
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
 def plot_shifts(d):
     fig, ax = plt.subplots(figsize=(7, 3.4))
     ax.hist(d, bins=40, color=C["parent"], edgecolor="white", linewidth=0.6)
@@ -123,6 +167,7 @@ def main():
         pairs.append({"series": label, **row})
         if name == "mean":
             stem = plot_shifts(d)
+            detectable = pd.DataFrame([detectable_effect(d)])
     pairs = pd.DataFrame(pairs)
     is_pair = pairs.series != SERIES["mean"]
     pairs.loc[is_pair, "p_A_holm"] = multipletests(pairs.loc[is_pair, "p_A"], method="holm")[1]
@@ -138,6 +183,11 @@ def main():
                    index=False)
     pairs.to_csv(config.TABLES_DIR / config.CRISIS_TEST_PAIRS_FILE.format(level=LEVEL, lag=config.TVP_MAIN_LAG),
                  index=False)
+    detectable.to_csv(config.TABLES_DIR / config.CRISIS_TEST_DETECTABLE_FILE.format(level=LEVEL, lag=config.TVP_MAIN_LAG),
+                      index=False)
+    full_period = full_period_gap(measures)
+    full_period.to_csv(config.TABLES_DIR / config.ESG_GAP_FULL_PERIOD_FILE.format(level=LEVEL, lag=config.TVP_MAIN_LAG),
+                       index=False)
 
     print(f"T = {len(delta_mean)} weeks, {int(crisis.sum())} crisis, {int((crisis == 0).sum())} calm; "
           f"figure: output/figures/{stem}.png (+ .pdf)\n")
@@ -147,6 +197,10 @@ def main():
     cols = ["series", "D", "p_A", "p_A_holm", "p_A_no_short_shifts", "se_nw_auto", "t_nw_auto", "p_nw_auto",
             "nw_auto_lags", "se_nw_52", "t_nw_52", "p_nw_52"]
     print(pairs[cols].round(4).to_string(index=False))
+    print("\nDetectable effect, D(k) of the average of the five pairs")
+    print(detectable.round(4).to_string(index=False))
+    print(f"\nSECONDARY ANALYSIS: mean gap over the {len(delta_mean)} weeks, TVP-VAR(1), next to static Block 2")
+    print(full_period.round(4).T.to_string(header=False))
 
 
 if __name__ == "__main__":
